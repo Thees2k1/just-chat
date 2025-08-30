@@ -6,3 +6,6 @@
  3. setup Firebase
     - create a project on firebase (v)
     - build -> auth -> options: e.g. creadentials( email/password) -> enable.
+
+ #### oversteped :|
+  - change package name

@@ -6,7 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.just_chat"
+    //EDITED: changed organization name
+    namespace = "com.thees2k1.just_chat"
+    //testNamespace = "com.thees2k1.just_chat_dev
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,8 +22,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.just_chat"
+        //EDITED: changed organization name
+        applicationId = "com.thees2k1.just_chat"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
