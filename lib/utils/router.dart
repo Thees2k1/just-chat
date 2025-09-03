@@ -11,6 +11,6 @@ final GoRouter appRouter = GoRouter(
   initialLocation: RouteName.auth,
   routes: [
     GoRoute(path:RouteName.auth, builder: (context, state) => const AuthScreen()),
-    GoRoute(path: RouteName.home, builder: (context, state) => const HomeScreen()),
+    // GoRoute(path: RouteName.home, builder: (context, state) => const HomeScreen()),
   ],
 );

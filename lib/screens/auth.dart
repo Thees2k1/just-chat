@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_chat/constants/common.dart';
-
+import 'package:just_chat/utils/firebase.dart';
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -9,17 +10,42 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-    bool isLogin = true;
-    String email = '';
-    String password = '';
-    final formKey = GlobalKey<FormState>();
+  bool isLogin = true;
+  String email = '';
+  String password = '';
+  final formKey = GlobalKey<FormState>();
 
-  void submit(){
-    if(formKey.currentState!.validate()){
-      formKey.currentState!.save();
-      print('Email: $email, Password: $password, isLogin: $isLogin');
-    };
+  void submit() {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+    formKey.currentState!.save();
+
+    if(isLogin){
+      login(email,password);
+    }else{
+      registerUser(email,password);
+    }
   }
+
+  void registerUser ( String user, String password)async{
+    try{
+      final credentials = await firebaseAuth.createUserWithEmailAndPassword(email: user, password: password);
+    } on FirebaseAuthException catch (e){
+       ScaffoldMessenger.of(context).clearSnackBars();
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? "Authentication failed with error")));
+    } 
+  }
+
+  void login (String user, String password)async{
+    try{
+      final credentials = await firebaseAuth.signInWithEmailAndPassword(email: user, password: password);
+    } on FirebaseAuthException catch (e){
+       ScaffoldMessenger.of(context).clearSnackBars();
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? "Authentication failed with error")));
+    } 
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,16 +74,18 @@ class _AuthScreenState extends State<AuthScreen> {
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: "Email Address: ",
-                              hintText: "Enter your email address"
+                              hintText: "Enter your email address",
                             ),
                             keyboardType: TextInputType.emailAddress,
-                            validator: (value){
-                              if( value == null || value.isEmpty || !value.contains('@')){
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  !value.contains('@')) {
                                 return 'Please enter a valid email address';
                               }
                               return null;
                             },
-                            onSaved: (value){
+                            onSaved: (value) {
                               email = value!;
                             },
                           ),
@@ -69,7 +97,9 @@ class _AuthScreenState extends State<AuthScreen> {
                             keyboardType: TextInputType.text,
                             obscureText: true,
                             validator: (value) {
-                              if (value == null || value.isEmpty || value.length < 6) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.length < 6) {
                                 return 'Please enter a valid password (min. 6 characters)';
                               }
                               return null;
@@ -77,7 +107,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             onSaved: (value) {
                               password = value!;
                             },
-
                           ),
                         ],
                       ),
@@ -95,17 +124,19 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 child: Text(isLogin == true ? "Login" : "Signup"),
               ),
+              SizedBox(height: 4,),
               TextButton(
                 onPressed: () => setState(() {
                   isLogin = !isLogin;
                 }),
-                style: TextButton.styleFrom(textStyle: TextStyle(
-                  color: Colors.white,
-                )),
+                style: TextButton.styleFrom(
+                  textStyle: TextStyle(color: Colors.white),
+                ),
                 child: Text(
                   isLogin == true
                       ? 'Create new account'
                       : 'Already have an account',
+                      style:  TextStyle(color: Colors.white),
                 ),
               ),
             ],
