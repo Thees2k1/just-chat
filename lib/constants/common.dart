@@ -21,4 +21,5 @@ abstract class Assets {
 abstract class ApiConfigs {
   static const cdnCloudName = 'dnk0wz0v3';
   static const cdnUrl = 'https://api.cloudinary.com/v1_1/$cdnCloudName/image/upload';
+  static const cdnUploadPreset = 'uhbkzyjm';
 }
