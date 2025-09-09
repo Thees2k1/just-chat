@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^16.2.1
+  image_picker: ^1.2.0
 
 dev_dependencies:
   flutter_test:

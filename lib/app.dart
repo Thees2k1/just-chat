@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_chat/constants/common.dart';
 import 'package:just_chat/screens/auth.dart';
 import 'package:just_chat/screens/home.dart';
 import 'package:just_chat/utils/firebase.dart';
-import 'package:just_chat/utils/router.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

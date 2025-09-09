@@ -17,3 +17,8 @@ abstract class Assets {
   static const _IMAGE_PREFIX ='assets/images/';
   static const chatImage ='${_IMAGE_PREFIX}chat.png';
 }
+
+abstract class ApiConfigs {
+  static const cdnCloudName = 'dnk0wz0v3';
+  static const cdnUrl = 'https://api.cloudinary.com/v1_1/$cdnCloudName/image/upload';
+}

@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 import 'package:just_chat/screens/auth.dart';
-import 'package:just_chat/screens/home.dart';
 
 abstract class RouteName{
   static const auth = '/auth';

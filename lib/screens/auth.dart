@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:just_chat/constants/common.dart';
 import 'package:just_chat/utils/firebase.dart';
+import 'package:just_chat/widgets/image_picker_preview.dart';
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -21,29 +24,45 @@ class _AuthScreenState extends State<AuthScreen> {
     }
     formKey.currentState!.save();
 
-    if(isLogin){
-      login(email,password);
-    }else{
-      registerUser(email,password);
+    if (isLogin) {
+      login(email, password);
+    } else {
+      registerUser(email, password);
     }
   }
 
-  void registerUser ( String user, String password)async{
-    try{
-      final credentials = await firebaseAuth.createUserWithEmailAndPassword(email: user, password: password);
-    } on FirebaseAuthException catch (e){
-       ScaffoldMessenger.of(context).clearSnackBars();
-       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? "Authentication failed with error")));
-    } 
+  void registerUser(String user, String password) async {
+    try {
+      final credentials = await firebaseAuth.createUserWithEmailAndPassword(
+        email: user,
+        password: password,
+      );
+      debugPrint("User registered: ${credentials.user?.email}");
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? "Authentication failed with error"),
+        ),
+      );
+    }
   }
 
-  void login (String user, String password)async{
-    try{
-      final credentials = await firebaseAuth.signInWithEmailAndPassword(email: user, password: password);
-    } on FirebaseAuthException catch (e){
-       ScaffoldMessenger.of(context).clearSnackBars();
-       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? "Authentication failed with error")));
-    } 
+  void login(String user, String password) async {
+    try {
+      final credentials = await firebaseAuth.signInWithEmailAndPassword(
+        email: user,
+        password: password,
+      );
+      debugPrint("User signed in: ${credentials.user?.email}");
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? "Authentication failed with error"),
+        ),
+      );
+    }
   }
 
   @override
@@ -71,6 +90,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
+                          if(!isLogin)
+                            ...[ImagePickerPreview(),SizedBox(height: 12),] ,
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: "Email Address: ",
@@ -124,7 +145,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 child: Text(isLogin == true ? "Login" : "Signup"),
               ),
-              SizedBox(height: 4,),
+              SizedBox(height: 4),
               TextButton(
                 onPressed: () => setState(() {
                   isLogin = !isLogin;
@@ -136,7 +157,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   isLogin == true
                       ? 'Create new account'
                       : 'Already have an account',
-                      style:  TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
