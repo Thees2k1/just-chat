@@ -21,7 +21,9 @@ class MainApp extends StatelessWidget {
           }
         }
         if(snapshot.hasData){
-          return HomeScreen(user: snapshot.data!);
+          final authData = snapshot.data;
+
+          return HomeScreen(user:authData! );
         }
 
         return const AuthScreen();
