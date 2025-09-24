@@ -4,52 +4,82 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:just_chat/model/user.dart';
 import 'package:just_chat/utils/firebase.dart';
+import 'package:just_chat/widgets/chat_message_section.dart';
+import 'package:just_chat/widgets/skeletons/avatar_skeleton.dart';
 
 // import '../model/user.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.user});
+  HomeScreen({super.key, required this.user});
 
   final auth.User user;
+  final firestore = FirebaseFirestore.instanceFor(
+    app: Firebase.app(),
+    databaseId: 'just-chat-db',
+  );
 
   Future<User?> fetchUserData() async {
-   try {
-     final firestore = FirebaseFirestore.instanceFor(app: Firebase.app(),databaseId: 'just-chat-db');
-    final userData = (await firestore.collection('users').doc(user.uid).get())
-        .data()!;
-    return User(
-      username: userData['username'],
-      id: user.uid,
-      email: userData['email'] ?? user.email,
-      avatarUrl: userData['imageUrl'],
-    );
-   } on FirebaseException catch (e){
-    //  ScaffoldMessenger.of(context).clearSnackBars();
-    //   ScaffoldMessenger.of(
-    //   context,
-    // ).showSnackBar(SnackBar(content: Text('Error: ${error?.toString()}')));
-    debugPrint('Error: ${e.toString()}');
-   }
-   return null;
+    try {
+      final document = await firestore.collection('users').doc(user.uid).get();
+      if (document.exists) {
+        final userData = document.data()!;
+        return User(
+          username: userData['username'],
+          id: user.uid,
+          email: userData['email'] ?? user.email,
+          avatarUrl: userData['imageUrl'],
+        );
+      }
+      return User(email: user.email ?? '', id: user.uid);
+    } on FirebaseException catch (e) {
+      debugPrint('Error: ${e.toString()}');
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     // final displayname = user.username?? user.email;
     return FutureBuilder<User?>(
-      initialData: User(id: user.uid, email: user.email ?? ''),
       future: fetchUserData(),
       builder: (context, asyncSnapshot) {
         final isLoading =
             asyncSnapshot.connectionState == ConnectionState.waiting;
         final isError = asyncSnapshot.hasError;
         final hasNoData = asyncSnapshot.data == null;
+        final displayName = asyncSnapshot.data?.username ?? user.email;
+
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              'Home',
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            ),
+            title: (isLoading || isError || hasNoData)
+                ? Row(children: [const AvartarSkeleton()])
+                : Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundImage: asyncSnapshot.data!.avatarUrl != null
+                            ? NetworkImage(asyncSnapshot.data!.avatarUrl!)
+                            : null,
+                      ),
+                      const SizedBox(width: 8),
+                      Text.rich(
+                        TextSpan(
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          children: [
+                            TextSpan(text: 'Welcome back, '),
+                            TextSpan(
+                              text: displayName,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: '!'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
             backgroundColor: Theme.of(context).colorScheme.primary,
             actions: [
               IconButton(
@@ -79,42 +109,10 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildError() {
-    return Center(child: Text('Something went wrong :()'));
+    return Center(child: Text('Something went wrong :('));
   }
 
   Widget _buildData(User user) {
-    final displayName = user.username ?? user.email;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Text('Welcome back $displayName'),
-          if (user.avatarUrl != null)
-            CircleAvatar(radius: 100, child: Image.network(user.avatarUrl!)),
-          NewMessageInput(onSendMessage: () {}),
-        ],
-      ),
-    );
-  }
-}
-
-class NewMessageInput extends StatefulWidget {
-  const NewMessageInput({super.key, this.onSendMessage});
-
-  final VoidCallback? onSendMessage;
-
-  @override
-  State<NewMessageInput> createState() => _NewMessageInputState();
-}
-
-class _NewMessageInputState extends State<NewMessageInput> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.amberAccent,
-      height: 100,
-      width: double.infinity,
-    );
+    return ChatMessageSection(user: user);
   }
 }

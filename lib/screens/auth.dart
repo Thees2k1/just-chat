@@ -37,11 +37,37 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() {
       submitState = SubmitState.submitting;
     });
-    if (isLogin) {
-      login(email, password);
-    } else {
-      registerUser(email, password, username, profileImage);
+    try {
+      if (isLogin) {
+        login(email, password);
+      } else {
+        registerUser(email, password, username, profileImage);
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? "Authentication failed with error"),
+        ),
+      );
+    } finally {
+      setState(() {
+        submitState = SubmitState.idle;
+      });
     }
+  }
+
+  Future<String> uploadToStorage({
+    required File file,
+    required String fileName,
+  }) async {
+    final storageRef = FirebaseStorage.instance.ref();
+    final fileRef = storageRef
+        .child('user_images')
+        .child('avatar')
+        .child('$fileName.jpg');
+    await fileRef.putFile(file);
+    return fileRef.getDownloadURL();
   }
 
   void registerUser(
@@ -55,45 +81,29 @@ class _AuthScreenState extends State<AuthScreen> {
         email: email,
         password: password,
       );
-      final storageRef = FirebaseStorage.instance.ref();
-      final fileRef = storageRef
-          .child('user_images')
-          .child('avatar')
-          .child('${credentials.user!.uid}.jpg');
       String? fileUrl;
       if (profileImage != null) {
-        await fileRef.putFile(profileImage);
-        fileUrl = await fileRef.getDownloadURL();
+        fileUrl = await uploadToStorage(
+          file: profileImage,
+          fileName: credentials.user!.uid,
+        );
       }
 
-      debugPrint(
-        "User registered: ${credentials.user?.email} with image:$fileUrl",
-      );
+      await firebaseAuth.currentUser?.updateDisplayName(username);
+      await firebaseAuth.currentUser?.updatePhotoURL(fileUrl);
+
       final firestore = FirebaseFirestore.instanceFor(
         app: Firebase.app(),
         databaseId: 'just-chat-db',
       );
-      
+
       await firestore.collection('users').doc(credentials.user!.uid).set({
         'username': username,
         'email': email,
         'imageUrl': fileUrl,
       });
-
-      setState(() {
-        submitState = SubmitState.success;
-      });
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message ?? "Authentication failed with error"),
-        ),
-      );
-
-      setState(() {
-        submitState = SubmitState.error;
-      });
+    } on FirebaseAuthException {
+      rethrow;
     }
   }
 
@@ -107,16 +117,8 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         submitState = SubmitState.success;
       });
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message ?? "Authentication failed with error"),
-        ),
-      );
-      setState(() {
-        submitState = SubmitState.error;
-      });
+    } on FirebaseAuthException {
+      rethrow;
     }
   }
 
