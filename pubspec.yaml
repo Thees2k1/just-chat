@@ -19,6 +19,8 @@ dependencies:
   go_router: ^16.2.1
   image_picker: ^1.2.0
   shimmer: ^3.0.0
+  bento_ui_kit:
+    path: packages/bento_ui_kit
 
 dev_dependencies:
   flutter_test:
