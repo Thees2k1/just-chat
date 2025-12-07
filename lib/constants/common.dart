@@ -14,12 +14,13 @@ abstract class Global {
 
 abstract class Assets {
   // ignore: constant_identifier_names
-  static const _IMAGE_PREFIX ='assets/images/';
-  static const chatImage ='${_IMAGE_PREFIX}chat.png';
+  static const _IMAGE_PREFIX = 'assets/images/';
+  static const chatImage = '${_IMAGE_PREFIX}chat.png';
 }
 
 abstract class ApiConfigs {
   static const cdnCloudName = 'dnk0wz0v3';
-  static const cdnUrl = 'https://api.cloudinary.com/v1_1/$cdnCloudName/image/upload';
+  static const cdnUrl =
+      'https://api.cloudinary.com/v1_1/$cdnCloudName/image/upload';
   static const cdnUploadPreset = 'uhbkzyjm';
 }

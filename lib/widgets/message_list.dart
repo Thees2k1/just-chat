@@ -5,7 +5,11 @@ import 'package:just_chat/widgets/message_item.dart';
 class MesssageList extends StatelessWidget {
   final List<Message> messages;
   final String currentUserId;
-  const MesssageList({super.key, required this.messages,required this.currentUserId});
+  const MesssageList({
+    super.key,
+    required this.messages,
+    required this.currentUserId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,4 +27,3 @@ class MesssageList extends StatelessWidget {
     );
   }
 }
-

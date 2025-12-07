@@ -8,8 +8,10 @@ void main() async {
   // if(Firebase.apps.isNotEmpty){
   //   Firebase.apps.clear();
   // }
-    if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
   runApp(const MainApp());
 }

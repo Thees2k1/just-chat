@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:just_chat/model/message.dart';
 import 'package:just_chat/model/user.dart';
@@ -7,15 +8,35 @@ import 'package:just_chat/utils/firebase.dart';
 import 'package:just_chat/widgets/message_list.dart';
 import 'package:just_chat/widgets/new_message_input.dart';
 
-class ChatMessageSection extends StatelessWidget {
+class ChatMessageSection extends StatefulWidget {
   ChatMessageSection({super.key, required this.user});
 
   final User user;
 
+  @override
+  State<ChatMessageSection> createState() => _ChatMessageSectionState();
+}
+
+class _ChatMessageSectionState extends State<ChatMessageSection> {
   final firestore = FirebaseFirestore.instanceFor(
     app: Firebase.app(),
     databaseId: 'just-chat-db',
   );
+
+  void setupPushNotification() async {
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+
+    final token = await fcm.getToken();
+    debugPrint('pn token: $token');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setupPushNotification();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -60,7 +81,7 @@ class ChatMessageSection extends StatelessWidget {
             ),
           ),
           NewMessageInput(
-            onSendMessage: (message) => handleSendMessage(message, user),
+            onSendMessage: (message) => handleSendMessage(message, widget.user),
           ),
         ],
       ),
@@ -72,7 +93,7 @@ class ChatMessageSection extends StatelessWidget {
       'text': message,
       'createdAt': Timestamp.now(),
       'userId': sender.id,
-      'username': sender.username?? sender.email,
+      'username': sender.username ?? sender.email,
       'userImage': sender.avatarUrl,
     });
   }

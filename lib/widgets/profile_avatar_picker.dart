@@ -16,6 +16,7 @@ class ProfileAvatarPicker extends StatelessWidget {
       ),
     );
   }
+
   void openImagePicker() async {
     final image = await picker.pickImage(
       source: ImageSource.camera,
@@ -24,6 +25,6 @@ class ProfileAvatarPicker extends StatelessWidget {
     if (image == null) {
       return;
     }
-      onImagePicked(File(image.path));
+    onImagePicked(File(image.path));
   }
 }

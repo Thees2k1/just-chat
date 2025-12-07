@@ -29,8 +29,9 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
       previewFile = File(pickedImage.path);
     });
   }
-  bool isUploaded =false;
-  String? imageUrl ;
+
+  bool isUploaded = false;
+  String? imageUrl;
 
   void _uploadImage() async {
     try {
@@ -41,12 +42,11 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
         previewFile!,
         params: UploadParams(uploadPreset: "<your_upload_preset>", type: "raw"),
       );
-      if(response?.data !=null){
+      if (response?.data != null) {
         setState(() {
-          isUploaded =true;
+          isUploaded = true;
           imageUrl = response!.data!.url;
         });
-
       }
     } catch (e) {
       debugPrint("Upload error: $e");
@@ -55,18 +55,21 @@ class _ImagePickerPreviewState extends State<ImagePickerPreview> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
-        isUploaded ? CircleAvatar(
-          radius: 48,
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          backgroundImage: NetworkImage(imageUrl!),
-        ): CircleAvatar(
-          radius: 48,
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          backgroundImage:  previewFile != null ? FileImage(previewFile!) : null,
-        ),
+        isUploaded
+            ? CircleAvatar(
+                radius: 48,
+                backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                backgroundImage: NetworkImage(imageUrl!),
+              )
+            : CircleAvatar(
+                radius: 48,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                backgroundImage: previewFile != null
+                    ? FileImage(previewFile!)
+                    : null,
+              ),
 
         SizedBox(height: 8),
         Row(

@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.10.0
 
 dependencies:
   cloud_firestore: ^6.0.2
@@ -21,6 +21,7 @@ dependencies:
   shimmer: ^3.0.0
   bento_ui_kit:
     path: packages/bento_ui_kit
+  firebase_messaging: ^16.0.4
 
 dev_dependencies:
   flutter_test:

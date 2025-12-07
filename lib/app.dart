@@ -12,22 +12,24 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: Global.appName,
       theme: Global.appTheme,
-      home: StreamBuilder(stream: firebaseAuth.authStateChanges(), builder: (context,snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting){
-          if (Theme.of(context).platform == TargetPlatform.iOS) {
-            return const Center(child: CircularProgressIndicator.adaptive());
-          } else {
-            return const Center(child: CircularProgressIndicator());
+      home: StreamBuilder(
+        stream: firebaseAuth.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            if (Theme.of(context).platform == TargetPlatform.iOS) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
           }
-        }
-        if(snapshot.hasData){
-          final authData = snapshot.data;
+          if (snapshot.hasData) {
+            final authData = snapshot.data;
+            return HomeScreen(user: authData!);
+          }
 
-          return HomeScreen(user:authData! );
-        }
-
-        return const AuthScreen();
-      })
+          return const AuthScreen();
+        },
+      ),
     );
   }
 }

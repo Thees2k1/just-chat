@@ -10,7 +10,7 @@ class ContainerButton extends StatelessWidget {
     this.radius = 12,
     this.width = 64,
     this.height = 32,
-    this.borderWidth =1.5,
+    this.borderWidth = 1.5,
   });
 
   final VoidCallback? onPressed;

@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:just_chat/constants/common.dart';
 import 'package:just_chat/utils/firebase.dart';
 import 'package:just_chat/widgets/profile_avatar_picker.dart';
-import 'package:bento_ui_kit/bento_ui_kit.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -230,38 +229,6 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 12),
-              ContainerButton(
-                onPressed: submitState == SubmitState.submitting
-                    ? null
-                    : submit,
-                label: submitState == SubmitState.submitting
-                    ? CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : Text(
-                        isLogin == true ? "Login" : "Signup",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-              ),
-              SizedBox(height: 12),
-              CircleButton(
-                onPressed: submitState == SubmitState.submitting
-                    ? null
-                    : submit,
-                child: submitState == SubmitState.submitting
-                    ? CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : Text(
-                        isLogin == true ? "Login" : "Signup",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
               ),
               SizedBox(height: 12),
               ElevatedButton(

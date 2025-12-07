@@ -9,3 +9,10 @@
 
  #### oversteped :|
   - change package name
+
+#### services:
+ 1. Authentication
+ 2. Cloud Firestore
+ 3. Firebase storage
+ 4. Push Notification/Cloud Messaging
+ 5. Cloud Functions
